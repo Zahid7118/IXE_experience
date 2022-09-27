@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:ixe-cliente-process-api="http://www.mulesoft.org/schema/mule/ixe-cliente-process-api"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/ixe-cliente-process-api http://www.mulesoft.org/schema/mule/ixe-cliente-process-api/current/mule-ixe-cliente-process-api.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd">
+	<api-gateway:autodiscovery apiId="18157594" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="3493240f-5773-4a1b-b748-a98ba0435a61" flowRef="ixe_clientes_experienceFlow" />
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="06837c93-5f5a-4e44-8936-87850e25d9d5" basePath="/api" >
+		<http:request-connection host="ixe-clientes-process-implementacion-h8oalw.5sc6y6-2.usa-e2.cloudhub.io" >
+			<http:authentication >
+				<oauth:client-credentials-grant-type clientId="0oa2jij3m3ZpkkrTO697" clientSecret="qsgSprnrTZogC3dWvi2kpMkoSqT6waFrN4ecnHy_" scopes="mulescope" tokenUrl="https://trial-2704993.okta.com/oauth2/default/v1/token" encodeClientCredentialsInBody="true" refreshTokenWhen="#[payload.response.status == 'unauthorized']"/>
+			</http:authentication>
+		</http:request-connection>
+	</http:request-config>
+	<flow name="ixe_clientes_experienceFlow" doc:id="48243a00-b5e7-47aa-a397-8388ffd7e61c" >
+		<set-variable value="#[attributes.uriParams.idCliente]" doc:name="idCliente" doc:id="b94c00d3-12cc-46d1-99c9-9f328e5b7e21" variableName="idCliente"/>
+		<logger level="INFO" doc:name="Logger" doc:id="a3e6f70c-5a43-4160-b51b-9070ee6092fb" message="Buscando cliente con id: #[vars.idCliente]"/>
+		<http:request method="GET" doc:name="Request" doc:id="a14cafce-2dd7-4caf-8337-c1c20bcf5fcd" path="/clientes/{idCliente}" config-ref="HTTP_Request_configuration">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"idCliente": vars.idCliente
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="6b9dca46-bbb9-4bee-ba2f-53735228b6b8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="8fa1e999-a5d6-485a-8c11-7312b149bc4a" message='Información obtenida: #[payload]'/>
+	</flow>
+</mule>

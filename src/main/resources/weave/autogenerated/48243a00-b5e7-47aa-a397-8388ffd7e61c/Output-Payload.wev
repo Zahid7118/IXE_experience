@@ -1,0 +1,16 @@
+%dw 2.0
+
+type auto_48243a00_b5e7_47aa_a397_8388ffd7e61c_Output_Payload = {
+  apellidoPaterno: String, 
+  idCliente: Number, 
+  correo: String, 
+  direccion: String, 
+  cuentas: Array<{    nombreBanco: String,     codigoBanco: Number,     moneda: String,     fechaCreacion: String,     numeroCuenta: Number,     numeroCuentaCLABE: Number,     id: Number,     saldo: Number,     _?: Any  }> {"description": "Cuentas asociadas al cliente"}, 
+  telefono: String, 
+  nombre: String, 
+  apellidoMaterno: String, 
+  nacimiento: String, 
+  nacionalidad: String, 
+  _?: Any
+}
+
